@@ -1,0 +1,619 @@
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+    // Initialize map
+    const map = L.map('map').setView([39.933365, 32.859741], 6); // Turkey center point
+    
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Array to store pins
+    const pins = [];
+    
+    // Custom pin icon
+    const pinIcon = L.icon({
+        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+        shadowSize: [41, 41]
+    });
+    
+    // Add click event listener to the map
+    map.on('click', function(e) {
+        // Create a marker at the clicked position
+        const marker = L.marker(e.latlng, {icon: pinIcon})
+            .addTo(map);
+        
+        // Create tooltip that says "You have selected this point"
+        marker.bindTooltip("You have selected this point");
+        
+        // Store the marker in the pins array
+        pins.push(marker);
+        
+        // Optional: Add a popup with more information that appears on click
+        marker.bindPopup(`
+            <div>
+                <h5>Selected Location</h5>
+                <p>Latitude: ${e.latlng.lat.toFixed(6)}</p>
+                <p>Longitude: ${e.latlng.lng.toFixed(6)}</p>
+                <button class="btn btn-sm btn-danger delete-pin" data-marker-id="${pins.length - 1}">Remove Pin</button>
+            </div>
+        `);
+        
+        // Add event listener for the delete button in the popup
+        marker.on('popupopen', function() {
+            document.querySelector('.delete-pin').addEventListener('click', function(event) {
+                const markerId = parseInt(event.target.getAttribute('data-marker-id'));
+                map.removeLayer(pins[markerId]);
+                pins[markerId] = null;
+            });
+        });
+    });
+    
+    // Add a control to clear all pins
+    const clearPinsControl = L.Control.extend({
+        options: {
+            position: 'topright'
+        },
+        
+        onAdd: function(map) {
+            const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+            container.innerHTML = `<a href="#" title="Clear all pins" style="display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; background-color: white; font-weight: bold;">×</a>`;
+            
+            container.onclick = function() {
+                pins.forEach(pin => {
+                    if (pin) {
+                        map.removeLayer(pin);
+                    }
+                });
+                pins.length = 0;
+                return false;
+            };
+            
+            return container;
+        }
+    });
+    
+    map.addControl(new clearPinsControl());
+    
+    // Star rating functionality
+    const ratingGroups = document.querySelectorAll('.rating-stars');
+    
+    ratingGroups.forEach(group => {
+        const stars = group.querySelectorAll('.star');
+        const hiddenInput = group.querySelector('input[type="hidden"]');
+        
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const value = star.getAttribute('data-value');
+                
+                // Update hidden input value
+                hiddenInput.value = value;
+                
+                // Reset all stars
+                stars.forEach(s => s.classList.remove('active'));
+                
+                // Set active stars up to the clicked one
+                for (let i = 0; i < value; i++) {
+                    stars[i].classList.add('active');
+                }
+            });
+        });
+    });
+    
+    // Form validation before submit
+    const form = document.getElementById('ratingForm');
+    
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            const hiddenInputs = form.querySelectorAll('input[type="hidden"]');
+            let valid = true;
+            
+            hiddenInputs.forEach(input => {
+                if (!input.value) {
+                    valid = false;
+                    // Find the parent category card to highlight
+                    const categoryCard = input.closest('.category-card');
+                    if (categoryCard) {
+                        categoryCard.classList.add('invalid');
+                        
+                        // Remove invalid class after animation
+                        setTimeout(() => {
+                            categoryCard.classList.remove('invalid');
+                        }, 2000);
+                    }
+                }
+            });
+            
+            if (!valid) {
+                event.preventDefault();
+                showAlert('Lütfen tüm kategorileri değerlendirin!', 'danger');
+            }
+        });
+    }
+
+    // Load location data (il-ilce-mahalle)
+    loadLocationData();
+    
+    // Add event listener for filter buttons
+    const filterButtons = document.querySelectorAll('.btn-outline-primary');
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+});
+
+// Show alert messages
+function showAlert(message, type = 'info') {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    
+    // Find the results div to insert the alert before it
+    const resultsDiv = document.querySelector('#sonuc');
+    resultsDiv.parentNode.insertBefore(alertDiv, resultsDiv);
+    
+    // Auto-close after 5 seconds
+    setTimeout(() => {
+        alertDiv.classList.remove('show');
+        setTimeout(() => alertDiv.remove(), 300);
+    }, 5000);
+}
+
+// Load location data from JSON
+function yorumGetir(gun = 0) {
+    const mahalleAdi = document.getElementById("ara").value.trim();
+
+    if (mahalleAdi === "") {
+        alert("Lütfen mahalle adı girin.");
+        return;
+    }
+
+    fetch(`getir.php?mahalle=${encodeURIComponent(mahalleAdi)}&gun=${gun}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.hata) {
+                document.getElementById("sonuc").innerHTML = `<p class="text-danger">${data.hata}</p>`;
+                return;
+            }
+
+            // Verileri doldur
+            document.getElementById("sonuc").classList.remove("d-none");
+            document.getElementById("chartContainer").classList.remove("d-none");
+
+            // Ortalama puanları yaz
+            document.getElementById("sonuc").innerHTML = `
+                <h4 class="mt-4 mb-3">${mahalleAdi} Mahallesi Değerlendirmesi</h4>
+                <div class="row">
+                    ${kategoriPuan("Güvenlik", data.guvenlik)}
+                    ${kategoriPuan("Temizlik", data.temizlik)}
+                    ${kategoriPuan("Ulaşım", data.ulasim)}
+                    ${kategoriPuan("Komşuluk", data.komsuluk)}
+                </div>
+                <h5 class="mt-4"><i class="fas fa-comments me-2"></i>Yorumlar</h5>
+                ${data.yorumlar.map(yorum => yorumKart(yorum)).join("")}
+            `;
+
+            // (İsteğe bağlı) Chart.js ile grafik çizimi yapılabilir burada
+        });
+}
+
+function kategoriPuan(ad, puan) {
+    return `
+    <div class="col-6 col-md-3 text-center mb-3">
+        <i class="fas fa-star text-warning"></i>
+        <span class="fs-5 fw-bold">(${puan.toFixed(1)})</span><br>
+        <span>${ad}</span>
+    </div>`;
+}
+
+function yorumKart(yorum) {
+    return `
+        <div class="card my-2">
+            <div class="card-body">
+                <p>${yorum.metin}</p>
+                <small class="text-muted">${yorum.tarih}</small>
+                <div class="mt-2 text-end small text-secondary">
+                    <i class="fas fa-shield-alt me-1"></i>${yorum.guvenlik}
+                    <i class="fas fa-broom me-1 ms-3"></i>${yorum.temizlik}
+                    <i class="fas fa-bus me-1 ms-3"></i>${yorum.ulasim}
+                    <i class="fas fa-users me-1 ms-3"></i>${yorum.komsuluk}
+                </div>
+            </div>
+        </div>`;
+}
+
+
+// Populate location dropdowns
+function populateLocationDropdowns(data) {
+    const ilSelect = document.getElementById("il-select");
+    const ilceSelect = document.getElementById("ilce-select");
+    const mahalleSelect = document.getElementById("mahalle-select");
+    
+    // Clear existing options
+    ilSelect.innerHTML = '<option value="" selected disabled>İl Seçiniz</option>';
+    ilceSelect.innerHTML = '<option value="" selected disabled>İlçe Seçiniz</option>';
+    mahalleSelect.innerHTML = '<option value="" selected disabled>Mahalle Seçiniz</option>';
+    
+    // Populate il dropdown
+    data.iller.forEach(il => {
+        const option = document.createElement("option");
+        option.value = il.il;
+        option.textContent = il.il;
+        ilSelect.appendChild(option);
+    });
+    
+    // Handle il change event
+    ilSelect.addEventListener("change", () => {
+        const secilenIl = ilSelect.value;
+        const ilObj = data.iller.find(i => i.il === secilenIl);
+        
+        ilceSelect.innerHTML = '<option value="" selected disabled>İlçe Seçiniz</option>';
+        mahalleSelect.innerHTML = '<option value="" selected disabled>Mahalle Seçiniz</option>';
+        
+        if (!ilObj) return;
+        
+        ilObj.ilceler.forEach(ilce => {
+            const option = document.createElement("option");
+            option.value = ilce.ilce;
+            option.textContent = ilce.ilce;
+            ilceSelect.appendChild(option);
+        });
+    });
+    
+    // Handle ilce change event
+    ilceSelect.addEventListener("change", () => {
+        const secilenIl = ilSelect.value;
+        const secilenIlce = ilceSelect.value;
+        const ilObj = data.iller.find(i => i.il === secilenIl);
+        
+        if (!ilObj) return;
+        
+        const ilceObj = ilObj.ilceler.find(i => i.ilce === secilenIlce);
+        
+        mahalleSelect.innerHTML = '<option value="" selected disabled>Mahalle Seçiniz</option>';
+        
+        if (!ilceObj) return;
+        
+        ilceObj.mahalleler.forEach(mahalle => {
+            const option = document.createElement("option");
+            option.value = mahalle;
+            option.textContent = mahalle;
+            mahalleSelect.appendChild(option);
+        });
+    });
+}
+
+// Add sample markers to the map
+function addSampleMarkersToMap() {
+    const map = L.map ? L.map : null;
+    if (!map) return;
+    
+    // Sample neighborhood data with coordinates
+    const sampleNeighborhoods = [
+        {
+            name: "Caferağa",
+            location: [40.9896, 29.0305],
+            ratings: { guvenlik: 4.5, temizlik: 4.2, ulasim: 4.8, komsuluk: 4.1 }
+        },
+        {
+            name: "Levent",
+            location: [41.0825, 29.0114],
+            ratings: { guvenlik: 4.7, temizlik: 4.6, ulasim: 4.5, komsuluk: 3.9 }
+        },
+        {
+            name: "Bahçelievler",
+            location: [39.9202, 32.8206],
+            ratings: { guvenlik: 3.9, temizlik: 3.7, ulasim: 4.4, komsuluk: 4.2 }
+        },
+        {
+            name: "Alsancak",
+            location: [38.4350, 27.1438],
+            ratings: { guvenlik: 4.1, temizlik: 3.9, ulasim: 4.9, komsuluk: 4.3 }
+        }
+    ];
+    
+    // Add markers to the map
+    sampleNeighborhoods.forEach(neighborhood => {
+        const marker = L.marker(neighborhood.location)
+            .addTo(map)
+            .bindPopup(`
+                <div class="p-2">
+                    <h5>${neighborhood.name}</h5>
+                    <div class="mt-2">
+                        <div><b>Güvenlik:</b> ${renderStars(neighborhood.ratings.guvenlik)}</div>
+                        <div><b>Temizlik:</b> ${renderStars(neighborhood.ratings.temizlik)}</div>
+                        <div><b>Ulaşım:</b> ${renderStars(neighborhood.ratings.ulasim)}</div>
+                        <div><b>Komşuluk:</b> ${renderStars(neighborhood.ratings.komsuluk)}</div>
+                    </div>
+                    <hr>
+                    <button 
+                        class="btn btn-sm btn-primary" 
+                        onclick="document.getElementById('ara').value = '${neighborhood.name}'; document.getElementById('report-tab').click(); yorumGetir();"
+                    >
+                        Detaylar
+                    </button>
+                </div>
+            `);
+    });
+}
+
+// Helper function to render star ratings
+function renderStars(rating) {
+    let stars = '';
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 >= 0.5;
+    
+    for (let i = 0; i < fullStars; i++) {
+        stars += '<i class="fas fa-star text-warning"></i>';
+    }
+    
+    if (halfStar) {
+        stars += '<i class="fas fa-star-half-alt text-warning"></i>';
+    }
+    
+    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+    for (let i = 0; i < emptyStars; i++) {
+        stars += '<i class="far fa-star text-warning"></i>';
+    }
+    
+    return stars + ` (${rating})`;
+}
+
+// Get and display comments
+function yorumGetir(gun = null) {
+    const mahalle = document.getElementById("ara").value.trim();  // Get neighborhood name
+    const sonucDiv = document.getElementById("sonuc");  // Results div
+    const chartContainer = document.getElementById("chartContainer");
+    
+    if (!mahalle) {
+        showAlert('Lütfen bir mahalle adı girin.', 'warning');
+        return;
+    }
+    
+    // Show loading state
+    sonucDiv.classList.remove('d-none');
+    sonucDiv.innerHTML = `
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Yükleniyor...</span>
+            </div>
+            <p class="mt-2">Bilgiler yükleniyor...</p>
+        </div>
+    `;
+    
+    // In a real implementation, this would fetch from server
+    // For demo purposes, we'll create mock data
+    setTimeout(() => {
+        // Mock data for visualization
+        const mockData = {
+            ortalama: {
+                guvenlik: 4.2,
+                temizlik: 3.8,
+                ulasim: 4.5,
+                komsuluk: 3.9
+            },
+            yorumlar: [
+                {
+                    metin: "Çok güzel bir mahalle, özellikle parklar ve yeşil alanlar bakımlı. Güvenlik konusunda da hiç sorun yaşamadım.",
+                    tarih: "2025-04-10T12:00:00",
+                    puanlar: { guvenlik: 5, temizlik: 4, ulasim: 4, komsuluk: 4 }
+                },
+                {
+                    metin: "Ulaşım çok iyi, her yere kolay erişim sağlanabiliyor. Temizlik konusunda bazı sokaklar daha özenli olabilir.",
+                    tarih: "2025-03-22T14:30:00",
+                    puanlar: { guvenlik: 4, temizlik: 3, ulasim: 5, komsuluk: 4 }
+                },
+                {
+                    metin: "Komşuluk ilişkileri biraz zayıf, herkes kendi işinde. Ancak genel olarak sakin ve huzurlu bir mahalle.",
+                    tarih: "2025-02-15T09:45:00",
+                    puanlar: { guvenlik: 4, temizlik: 4, ulasim: 5, komsuluk: 3 }
+                }
+            ]
+        };
+        
+        // Filter comments by date if needed
+        let yorumlarFiltreli = mockData.yorumlar;
+        if (gun) {
+            const gunMS = gun * 24 * 60 * 60 * 1000;
+            const simdi = new Date();
+            yorumlarFiltreli = yorumlarFiltreli.filter(y => {
+                const yorumTarihi = new Date(y.tarih);
+                return (simdi - yorumTarihi) <= gunMS;
+            });
+        }
+        
+        // Generate category cards
+        const kategoriler = [
+            { key: 'guvenlik', icon: 'shield-alt', title: 'Güvenlik' },
+            { key: 'temizlik', icon: 'broom', title: 'Temizlik' },
+            { key: 'ulasim', icon: 'bus', title: 'Ulaşım' },
+            { key: 'komsuluk', icon: 'users', title: 'Komşuluk' }
+        ];
+        
+        const puanKartlari = kategoriler.map(kategori => `
+            <div class="col-6 col-md-3 mb-3">
+                <div class="stats-card">
+                    <div class="stats-icon">
+                        <i class="fas fa-${kategori.icon} text-primary"></i>
+                    </div>
+                    <div class="stats-title">${kategori.title}</div>
+                    <div class="stats-value">
+                        <div class="rating-display mb-1">
+                            ${renderStars(mockData.ortalama[kategori.key])}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+        // Generate comments HTML
+        const yorumlarHTML = yorumlarFiltreli.length
+            ? yorumlarFiltreli.map(yorum => {
+                const tarih = new Date(yorum.tarih).toLocaleDateString("tr-TR");
+                return `
+                    <div class="comment-card card mb-3">
+                        <div class="card-body">
+                            <p class="comment-text mb-2">${yorum.metin}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="comment-date">${tarih}</small>
+                                <div class="d-flex gap-2">
+                                    ${kategoriler.map(k => `
+                                        <span title="${k.title}" data-bs-toggle="tooltip">
+                                            <i class="fas fa-${k.icon} text-muted"></i>
+                                            <small>${yorum.puanlar[k.key]}</small>
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('')
+            : '<div class="alert alert-info">Bu zaman aralığında yorum bulunmamaktadır.</div>';
+        
+        // Update results container
+        sonucDiv.innerHTML = `
+            <div class="mb-4">
+                <h4 class="results-title">
+                    <i class="fas fa-chart-line me-2"></i>
+                    ${mahalle} Mahallesi Değerlendirmesi
+                </h4>
+                <div class="row">${puanKartlari}</div>
+            </div>
+            
+            <div class="mb-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-comments me-2"></i>
+                    Yorumlar
+                </h5>
+                ${yorumlarHTML}
+            </div>
+        `;
+        
+        // Initialize tooltips
+        const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tooltips.forEach(tooltip => {
+            new bootstrap.Tooltip(tooltip);
+        });
+        
+        // Create chart
+        chartContainer.classList.remove('d-none');
+        const ctx = document.getElementById('puanGrafik').getContext('2d');
+        
+        // Destroy existing chart if it exists
+        if (window.puanChart) {
+            window.puanChart.destroy();
+        }
+        
+        // Create new chart
+        window.puanChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['Güvenlik', 'Temizlik', 'Ulaşım', 'Komşuluk'],
+                datasets: [{
+                    label: mahalle,
+                    data: [
+                        mockData.ortalama.guvenlik,
+                        mockData.ortalama.temizlik,
+                        mockData.ortalama.ulasim,
+                        mockData.ortalama.komsuluk
+                    ],
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 5,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.raw}/5`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Create bar chart as additional visualization
+        const barCtx = document.createElement('canvas');
+        barCtx.id = 'barChart';
+        barCtx.width = 400;
+        barCtx.height = 200;
+        chartContainer.appendChild(barCtx);
+        
+        new Chart(barCtx.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Güvenlik', 'Temizlik', 'Ulaşım', 'Komşuluk'],
+                datasets: [{
+                    label: 'Puan',
+                    data: [
+                        mockData.ortalama.guvenlik,
+                        mockData.ortalama.temizlik,
+                        mockData.ortalama.ulasim,
+                        mockData.ortalama.komsuluk
+                    ],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(255, 159, 64, 0.7)',
+                        'rgba(153, 102, 255, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(153, 102, 255, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 5,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+        
+        // Scroll to results
+        sonucDiv.scrollIntoView({ behavior: 'smooth' });
+        
+    }, 1000); // Simulate network delay
+}
+    </script>
