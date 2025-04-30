@@ -111,6 +111,7 @@
             gap: 0.25rem;
             margin-top: 0.5rem;
             justify-content: center;
+            flex-direction: row-reverse;
         }
         
         .star {
@@ -124,6 +125,7 @@
         .star.active {
             color: var(--accent-color);
         }
+
         
         /* Star hover effect */
         .rating-stars:hover .star {
@@ -437,13 +439,13 @@
                         <!-- Location Selection -->
                         <div class="col-md-4">
                             <label class="form-label"><i class="fas fa-map-marker-alt me-2"></i>İl:</label>
-                            <select id="il-select" class="form-select" required>
+                            <select id="il-select" name="il" class="form-select" required>
                                 <option value="" selected disabled>İl Seçiniz</option>
                             </select>
                         </div>
                         <div class="col-md-4">
                             <label class="form-label"><i class="fas fa-city me-2"></i>İlçe:</label>
-                            <select id="ilce-select" class="form-select" required>
+                            <select id="ilce-select" name="ilce" class="form-select" required>
                                 <option value="" selected disabled>İlçe Seçiniz</option>
                             </select>
                         </div>
@@ -661,12 +663,12 @@
     const ratingGroups = document.querySelectorAll('.rating-stars');
     
     ratingGroups.forEach(group => {
-        const stars = group.querySelectorAll('.star');
+        const stars = Array.from(group.querySelectorAll('.star')).reverse();
         const hiddenInput = group.querySelector('input[type="hidden"]');
         
-        stars.forEach(star => {
+        stars.forEach((star,index)=> {
             star.addEventListener('click', () => {
-                const value = star.getAttribute('data-value');
+                const value = index + 1;
                 
                 // Update hidden input value
                 hiddenInput.value = value;
