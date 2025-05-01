@@ -638,9 +638,9 @@
             
             <nav class="main-nav">
                 <ul class="nav-links">
-                    <li><a href="#" class="nav-link active">Ana Sayfa</a></li>
-                    <li><a href="#" class="nav-link">Harita</a></li>
-                    <li><a href="#" class="nav-link">Değerlendirme</a></li>
+                    <li><a href="index.php" class="nav-link">Ana Sayfa</a></li>
+                    <li><a href="map.php" class="nav-link">Harita</a></li>
+                    <li><a href="review.php" class="nav-link">Değerlendirme</a></li>
                     <li><a href="#" class="nav-link">Rapor</a></li>
                 </ul>
             </nav>
@@ -680,16 +680,27 @@
             
             // Aktif menü öğesi işlevi
             const navLinkItems = document.querySelectorAll('.nav-link');
-            
-            navLinkItems.forEach(link => {
-                link.addEventListener('click', function() {
-                    navLinkItems.forEach(item => item.classList.remove('active'));
-                    this.classList.add('active');
-                });
+            const currentPath = window.location.pathname;
+
+            navLinkItems.forEach(item => {
+                item.classList.remove('active');
             });
+            
+            let activeSet = false;
+            navLinkItems.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href === currentPath || 
+            (currentPath.endsWith(href) && href !== '#') || 
+            (currentPath === '/' && href === 'index.php')) {
+            link.classList.add('active');
+        }
+        
+        // Tıklama işleyici ekleme
+        link.addEventListener('click', function() {
+            navLinkItems.forEach(item => item.classList.remove('active'));
+            this.classList.add('active');
         });
+    });
+});
     </script>
-  
-
-
     
