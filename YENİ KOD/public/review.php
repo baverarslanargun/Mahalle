@@ -429,16 +429,28 @@ require_once __DIR__.'/../templates/header.php';
                               <select name="mahalle" class="form-select" id="mahSelect"><option>Önce ilçe seçin</option></select>
                         </div>
 
-                        <!-- Rating Categories -->
                         <!-- Rating Categories (Dinamik) -->
                     <div class="col-12">
                         <h5 class="mt-3 mb-3 text-center">Kategorilere Göre Puanlama</h5>
                         <div class="category-grid">
+                        <?php
+                            $kategoriIkonlari = [
+                                "Ulaşım"            => "fas fa-bus",
+                                "Güvenlik"          => "fas fa-shield-alt",
+                                "Yeşil Alan"        => "fas fa-tree",
+                                "Komşuluk"          => "fas fa-users",
+                                "Okullar"           => "fas fa-school",
+                                "Sağlık"            => "fas fa-clinic-medical",
+                                "Sosyal İmkanlar"   => "fas fa-theater-masks",
+                                "Çevresel Kirlilik" => "fas fa-smog",
+                                "Temizlik"          => "fas fa-broom"
+                            ];
+                          ?>
                             <?php foreach($kategoriler as $kat): ?>
                             <div class="category-card">
                                 <div class="category-icon">
                                     <!-- Dilersen $kat['ikon'] gibi bir alan eklersen, ikonları da dinamik yapabiliriz -->
-                                    <i class="fas fa-star"></i>
+                                    <i class="<?= $kategoriIkonlari[$kat['isim']] ?? 'fas fa-star' ?>"></i>
                                 </div>
                                 <div class="category-title"><?= htmlspecialchars($kat['isim']) ?></div>
                                 <div class="rating-stars" data-rating-for="kategori_<?= $kat['id'] ?>">
