@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yeniden Düzenlenmiş Header Tasarımı</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Inter', 'Helvetica', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        /* Header Stilleri */
+        .header {
+            background: white;
+            color: #333;
+            padding: 20px 24px;
+            position: relative;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .header-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* Logo Stilleri */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-icon {
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .logo-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .logo-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            letter-spacing: 0.5px;
+            color: #0D0C22;
+            background: linear-gradient(90deg, #0D0C22, #524f68);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Ana Navigasyon */
+        .main-nav {
+            display: flex;
+            justify-content: center;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style-type: none;
+        }
+        
+        .nav-link {
+            position: relative;
+            padding: 8px 16px;
+            text-decoration: none;
+            color: #6e6d7a;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .nav-link:hover {
+            color: #0D0C22;
+        }
+        
+        .nav-link.active {
+            color: #0D0C22;
+            font-weight: 600;
+        }
+        
+        .nav-link:after {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 50%;
+            background-color: #0D0C22;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover:after,
+        .nav-link.active:after {
+            width: 30px;
+            left: calc(50% - 15px);
+        }
+        
+        .nav-icon {
+            font-size: 16px;
+        }
+        
+        /* Arama Kutusu */
+        .search-container {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+            margin-right: 20px;
+        }
+        
+        .search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-input {
+            border: 1px solid #e7e7e9;
+            background-color: #f3f3f4;
+            padding: 10px 15px 10px 36px;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+            width: 180px;
+            transition: all 0.2s;
+            color: #6e6d7a;
+        }
+        
+        .search-input::placeholder {
+            color: #9e9ea7;
+        }
+        
+        .search-input:focus {
+            background-color: #fff;
+            border-color: #dbdbde;
+            box-shadow: 0 0 0 3px rgba(13, 12, 34, 0.05);
+            width: 220px;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        /* Giriş/Kayıt Linkleri */
+        .auth-links {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .auth-link {
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        
+        .login {
+            color: #6e6d7a;
+        }
+        
+        .signup {
+            background-color: #0D0C22;
+            color: white;
+        }
+        
+        .login:hover {
+            color: #0D0C22;
+        }
+        
+        .signup:hover {
+            background-color: #000;
+        }
+        
+        /* Mobil Menü Butonu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        /* Responsive Tasarım */
+        @media (max-width: 992px) {
+            .header-container {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .main-nav {
+                order: 3;
+                width: 100%;
+                margin-top: 10px;
+            }
+            
+            .search-container {
+                order: 2;
+                margin-left: auto;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .logo {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .main-nav, .search-container, .auth-links {
+                display: none;
+                width: 100%;
+                margin-top: 15px;
+            }
+            
+            .nav-links {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .nav-link {
+                padding: 12px 0;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+            
+            .auth-links {
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 15px;
+            }
+            
+            .main-nav.open, .search-container.open, .auth-links.open {
+                display: flex;
+            }
+        }
+
+        .mahalle-container {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .mahalle-content {
+            flex: 1;
+            min-width: 300px;
+            padding-right: 40px;
+        }
+        
+        .mahalle-image {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .mahalle-title {
+            font-size: 42px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .mahalle-description {
+            font-size: 18px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .mahalle-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .mahalle-button-google {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #333;
+        }
+        
+        .mahalle-button-email {
+            padding: 12px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .mahalle-button-google:hover {
+            background-color: #f8f8f8;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .mahalle-button-email:hover {
+            background-color: #2980b9;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .mahalle-google-icon {
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+        }
+        
+        .mahalle-illustration {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+        }
+        
+        @media (max-width: 768px) {
+            .mahalle-container {
+                flex-direction: column;
+            }
+            
+            .mahalle-content {
+                padding-right: 0;
+                margin-bottom: 30px;
+            }
+        }
+        .m360-hedef-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .m360-hedef-baslik {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .m360-hedef-kartlar {
+            display: flex;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .m360-hedef-kart {
+            flex: 1;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .m360-hedef-kart:hover {
+            transform: translateY(-5px);
+        }
+        
+        .m360-hedef-gorsel {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+        }
+        
+        .m360-hedef-icerik {
+            padding: 1.5rem;
+        }
+        
+        .m360-hedef-kart-baslik {
+            color: #101828;
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .m360-hedef-icon {
+            width: 24px;
+            height: 24px;
+            fill: #FF5730;
+        }
+        
+        .m360-hedef-metin {
+            color: #475467;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+        
+        .m360-hedef-etiketler {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .m360-hedef-etiket {
+            background-color: #F5F5F5;
+            color: #344054;
+            padding: 0.35rem 0.75rem;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .m360-daha-fazla {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .m360-daha-fazla-btn {
+            background-color: #2E90FA;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .m360-daha-fazla-btn:hover {
+            background-color: #1570CD;
+        }
+        
+        @media (max-width: 768px) {
+            .m360-hedef-kartlar {
+                flex-direction: column;
+            }
+        }
+        .mh360-footer-container {
+            font-family: Arial, sans-serif;
+            padding: 40px 20px;
+            background-color: #ffffff;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .mh360-footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 30px;
+        }
+        
+        .mh360-footer-logo-section {
+            flex: 1;
+            min-width: 200px;
+            margin-right: 40px;
+            margin-bottom: 20px;
+        }
+        
+        .mh360-footer-logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        
+        .mh360-footer-logo img {
+            height: 24px;
+            margin-right: 10px;
+        }
+        
+        .mh360-footer-logo span {
+            font-size: 22px;
+            font-weight: bold;
+            color: #222;
+        }
+        
+        .mh360-footer-social {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .mh360-footer-social a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background-color: #f5f5f5;
+            transition: background-color 0.3s;
+        }
+        
+        .mh360-footer-social a:hover {
+            background-color: #e5e5e5;
+        }
+        
+        .mh360-footer-social svg {
+            width: 16px;
+            height: 16px;
+            fill: #333;
+        }
+        
+        .mh360-footer-section {
+            flex: 1;
+            min-width: 160px;
+            margin-bottom: 20px;
+        }
+        
+        .mh360-footer-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .mh360-footer-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .mh360-footer-section li {
+            margin-bottom: 10px;
+        }
+        
+        .mh360-footer-section a {
+            text-decoration: none;
+            color: #666;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        
+        .mh360-footer-section a:hover {
+            color: #0099ff;
+        }
+        
+        .mh360-footer-bottom {
+            padding-top: 20px;
+            font-size: 12px;
+            color: #999;
+            text-align: center;
+        }
+    </style>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahalle360 - Harita</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <style>
+        /* Main changes:
+1. Modified sidebar positioning to use fixed positioning with z-index to overlay content
+2. Removed the margin-right adjustment in filter-active class
+3. Adjusted transition properties for smoother animation
+*/
+
+/* Eşsiz stil sınıfları - mh-map- öneki ile */
+.mh-map-container * {
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.mh-map-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+.mh-map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e6e6e6;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    height: 54px;
+    position: relative;
+    z-index: 2000;
+}
+
+.mh-map-logo {
+    display: flex;
+    align-items: center;
+}
+
+.mh-map-logo-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+    background-color: #00a8a8;
+    border-radius: 2px;
+}
+
+.mh-map-logo-text {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.mh-map-nav {
+    display: flex;
+    gap: 20px;
+}
+
+.mh-map-nav-item {
+    color: #666;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.mh-map-content {
+    position: relative;
+    height: calc(100vh - 54px);
+    display: flex;
+    /* Removed transition for margin-right */
+}
+
+.mh-map-main-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    position: relative;
+    padding: 0 10% 0 10%;
+}
+
+.mh-map-leaflet-container {
+    width: 100%;
+    height: 100%;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+.mh-map-notice {
+    padding: 12px 16px;
+    background-color: #e6f7ff;
+    color: #505a5f;
+    font-size: 14px;
+    text-align: center;
+}
+
+.mh-map-bottom-content {
+    width: 100%;
+    background-color: white;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.mh-map-search-section {
+    flex: 1;
+    background-color: #ffffff;
+    padding: 16px;
+    min-width: 300px;
+}
+
+.mh-map-search-header {
+    background-color: #0078d4;
+    color: white;
+    padding: 12px 16px;
+    font-weight: 500;
+    border-radius: 4px 4px 0 0;
+    margin-bottom: 0;
+}
+
+.mh-map-search-content {
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    padding: 16px;
+}
+
+.mh-map-form-group {
+    margin-bottom: 16px;
+}
+
+.mh-map-form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.mh-map-form-select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+}
+
+.mh-map-form-button {
+    display: inline-block;
+    background-color: #0078d4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.mh-map-form-button:hover {
+    background-color: #006cbe;
+}
+
+.mh-map-ratings-section {
+    flex: 1;
+    margin: 0;
+    padding: 16px;
+    min-width: 300px;
+}
+
+.mh-map-ratings-header {
+    background-color: #0078d4;
+    color: white;
+    padding: 12px 16px;
+    font-weight: 500;
+    border-radius: 4px 4px 0 0;
+    margin-bottom: 0;
+}
+
+.mh-map-ratings-content {
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    padding: 16px;
+}
+
+.mh-map-rating-average {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.mh-map-rating-badge {
+    display: inline-block;
+    background-color: #e53935;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+    margin-right: 8px;
+}
+
+.mh-map-rating-text {
+    color: #666;
+    font-size: 14px;
+}
+
+.mh-map-zoom-controls {
+    position: absolute;
+    top: 80px;
+    left: 10px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.mh-map-zoom-btn {
+    width: 30px;
+    height: 30px;
+    background-color: white;
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    user-select: none;
+}
+
+/* Yan Filtre Barı Stilleri */
+.mh-map-filter-toggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1500;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mh-map-filter-toggle:hover {
+    background-color: #f5f5f5;
+}
+
+.mh-map-filter-icon {
+    width: 16px;
+    height: 16px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='4' y1='21' x2='4' y2='14'%3E%3C/line%3E%3Cline x1='4' y1='10' x2='4' y2='3'%3E%3C/line%3E%3Cline x1='12' y1='21' x2='12' y2='12'%3E%3C/line%3E%3Cline x1='12' y1='8' x2='12' y2='3'%3E%3C/line%3E%3Cline x1='20' y1='21' x2='20' y2='16'%3E%3C/line%3E%3Cline x1='20' y1='12' x2='20' y2='3'%3E%3C/line%3E%3Cline x1='1' y1='14' x2='7' y2='14'%3E%3C/line%3E%3Cline x1='9' y1='8' x2='15' y2='8'%3E%3C/line%3E%3Cline x1='17' y1='16' x2='23' y2='16'%3E%3C/line%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+/* MODIFIED: Changed sidebar to overlay content instead of pushing it */
+.mh-map-sidebar-filter {
+    width: 300px;
+    height: calc(100vh - 54px);
+    background-color: white;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+    z-index: 2000;
+    overflow-y: auto;
+    padding: 20px;
+    position: fixed;
+    top: 54px;
+    right: -300px;
+    transition: right 0.3s ease;
+}
+
+.mh-map-sidebar-filter.active {
+    right: 0;
+}
+
+.mh-map-filter-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #666;
+}
+
+.mh-map-filter-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.mh-map-filter-category {
+    margin-bottom: 24px;
+}
+
+.mh-map-filter-category-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #444;
+    margin-bottom: 12px;
+}
+
+.mh-map-filter-slider-container {
+    padding: 0 8px;
+}
+
+.mh-map-filter-slider {
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.mh-map-filter-range {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+}
+
+.mh-map-apply-filters {
+    display: block;
+    width: 100%;
+    background-color: #0078d4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 20px;
+    transition: background-color 0.2s;
+}
+
+.mh-map-apply-filters:hover {
+    background-color: #006cbe;
+}
+
+/* MODIFIED: Removed the margin adjustment when filter is active */
+.mh-map-content.filter-active {
+    /* margin-right: 300px; - Removed this line */
+}
+
+/* Responsive tasarım */
+@media (max-width: 768px) {
+    .mh-map-bottom-content {
+        flex-direction: column;
+    }
+    
+    .mh-map-search-section,
+    .mh-map-ratings-section {
+        width: 100%;
+    }
+    
+    .mh-map-sidebar-filter {
+        width: 100%;
+        right: -100%;
+    }
+    
+    .mh-map-sidebar-filter.active {
+        right: 0;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="mh-map-container">
+        <header class="mh-map-header">
+            <div class="mh-map-logo">
+                <div class="mh-map-logo-icon"></div>
+                <div class="mh-map-logo-text">Mahallem</div>
+            </div>
+            <nav class="mh-map-nav">
+                <a href="#" class="mh-map-nav-item">Ana Sayfa</a>
+                <a href="#" class="mh-map-nav-item">Harita</a>
+                <a href="#" class="mh-map-nav-item">Değerlendirme</a>
+            </nav>
+        </header>
+        
+        <div class="mh-map-content" id="map-content">
+            <div class="mh-map-main-area">
+                <div class="mh-map-leaflet-container" id="map">
+                    <!-- Harita buraya yüklenecek -->
+                    <div class="mh-map-zoom-controls">
+                        <div class="mh-map-zoom-btn" id="zoom-in">+</div>
+                        <div class="mh-map-zoom-btn" id="zoom-out">−</div>
+                    </div>
+                    
+                    <!-- Filtre Butonu -->
+                    <div class="mh-map-filter-toggle" id="filter-toggle">
+                        <div class="mh-map-filter-icon"></div>
+                        <span>Filtrele</span>
+                    </div>
+                </div>
+                
+                <div class="mh-map-notice">
+                    Haritada mahalleleri görüntüleyebilir ve değerlendirmeleri inceleyebilirsiniz. Yakınlaştırmak için haritaya tıklayın.
+                </div>
+                
+                <div class="mh-map-bottom-content">
+                    <div class="mh-map-search-section">
+                        <h3 class="mh-map-search-header">Mahalleye Göre Ara</h3>
+                        <div class="mh-map-search-content">
+                            <div class="mh-map-form-group">
+                                <label class="mh-map-form-label">İl</label>
+                                <select class="mh-map-form-select" id="il-select">
+                                    <option value="burdur">Burdur</option>
+                                    <option value="istanbul">İstanbul</option>
+                                    <option value="ankara">Ankara</option>
+                                    <option value="izmir">İzmir</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mh-map-form-group">
+                                <label class="mh-map-form-label">İlçe</label>
+                                <select class="mh-map-form-select" id="ilce-select">
+                                    <option value="tefenni">Tefenni</option>
+                                    <option value="merkez">Merkez</option>
+                                    <option value="yesilova">Yeşilova</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mh-map-form-group">
+                                <label class="mh-map-form-label">Mahalle</label>
+                                <select class="mh-map-form-select" id="mahalle-select">
+                                    <option value="sazak-koyu">SAZAK KÖYÜ</option>
+                                    <option value="zafer">Zafer</option>
+                                    <option value="cumhuriyet">Cumhuriyet</option>
+                                </select>
+                            </div>
+                            
+                            <button class="mh-map-form-button" id="search-button">Sonuçları Göster</button>
+                        </div>
+                    </div>
+                    
+                    <div class="mh-map-ratings-section">
+                        <h3 class="mh-map-ratings-header">SAZAK KÖYÜ Değerlendirmesi</h3>
+                        <div class="mh-map-ratings-content">
+                            <div class="mh-map-rating-average">
+                                <span class="mh-map-rating-badge">null</span>
+                                <span class="mh-map-rating-text">(0 değerlendirme)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Yan Filtre Barı -->
+            <div class="mh-map-sidebar-filter" id="sidebar-filter">
+                <button class="mh-map-filter-close" id="filter-close">&times;</button>
+                <h2 class="mh-map-filter-title">Filtreleri Ayarla</h2>
+                
+                <div class="mh-map-filter-category">
+                    <h3 class="mh-map-filter-category-title">Güvenlik</h3>
+                    <div class="mh-map-filter-slider-container">
+                        <input type="range" min="0" max="10" value="5" class="mh-map-filter-slider" id="security-slider">
+                        <div class="mh-map-filter-range">
+                            <span>Düşük</span>
+                            <span>Yüksek</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mh-map-filter-category">
+                    <h3 class="mh-map-filter-category-title">Sessizlik</h3>
+                    <div class="mh-map-filter-slider-container">
+                        <input type="range" min="0" max="10" value="5" class="mh-map-filter-slider" id="quiet-slider">
+                        <div class="mh-map-filter-range">
+                            <span>Gürültülü</span>
+                            <span>Sessiz</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mh-map-filter-category">
+                    <h3 class="mh-map-filter-category-title">Ulaşım</h3>
+                    <div class="mh-map-filter-slider-container">
+                        <input type="range" min="0" max="10" value="5" class="mh-map-filter-slider" id="transport-slider">
+                        <div class="mh-map-filter-range">
+                            <span>Uzak</span>
+                            <span>Yakın</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="mh-map-apply-filters" id="apply-filters">Filtreleri Uygula</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script>
+        // Harita başlatma
+        const map = L.map('map', {
+            center: [37.7, 32.0], // Türkiye'nin orta noktası
+            zoom: 6,
+            zoomControl: false // Kendi zoom kontrollerimizi kullanacağız
+        });
+        
+        // OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        
+        // Kahramanmaraş için örnek marker
+        const marker = L.marker([37.5746, 36.9225])
+            .addTo(map)
+            .bindPopup("Kahramanmaraş");
+        
+        // Zoom kontrolleri
+        document.getElementById('zoom-in').addEventListener('click', function() {
+            map.zoomIn();
+        });
+        
+        document.getElementById('zoom-out').addEventListener('click', function() {
+            map.zoomOut();
+        });
+        
+        // Yan filtre barı kontrolü
+        const filterToggle = document.getElementById('filter-toggle');
+        const sidebarFilter = document.getElementById('sidebar-filter');
+        const filterClose = document.getElementById('filter-close');
+        const mapContent = document.getElementById('map-content');
+        
+        filterToggle.addEventListener('click', function() {
+            sidebarFilter.classList.add('active');
+            mapContent.classList.add('filter-active');
+        });
+        
+        filterClose.addEventListener('click', function() {
+            sidebarFilter.classList.remove('active');
+            mapContent.classList.remove('filter-active');
+        });
+        
+        // Form işlemleri
+        document.getElementById('search-button').addEventListener('click', function() {
+            const il = document.getElementById('il-select').value;
+            const ilce = document.getElementById('ilce-select').value;
+            const mahalle = document.getElementById('mahalle-select').value;
+            
+            // Burada seçilen lokasyona göre haritayı güncelleyebilirsiniz
+            console.log(`Aranan lokasyon: ${il} / ${ilce} / ${mahalle}`);
+            
+            // Örnek olarak bir koordinata zoom yapalım
+            if (il === 'burdur' && ilce === 'tefenni') {
+                map.setView([37.3, 29.8], 12);
+            }
+        });
+        
+        // Filtre uygulama
+        document.getElementById('apply-filters').addEventListener('click', function() {
+            const securityValue = document.getElementById('security-slider').value;
+            const quietValue = document.getElementById('quiet-slider').value;
+            const transportValue = document.getElementById('transport-slider').value;
+            
+            // Filtre değerlerini uygulama
+            console.log(`Filtreler: Güvenlik=${securityValue}, Sessizlik=${quietValue}, Ulaşım=${transportValue}`);
+            
+            // Filtreleri uyguladıktan sonra barı kapat
+            sidebarFilter.classList.remove('active');
+            mapContent.classList.remove('filter-active');
+            
+            // Burada filtrelere göre haritada mahalleleri filtreleme işlemi yapılabilir
+        });
+        
+        // Sayfa yüklendiğinde haritayı yeniden boyutlandırma
+        window.addEventListener('load', function() {
+            map.invalidateSize();
+        });
+        
+        // Ekran boyutu değiştiğinde haritayı yeniden boyutlandırma
+        window.addEventListener('resize', function() {
+            map.invalidateSize();
+        });
+    </script>
+</body>
