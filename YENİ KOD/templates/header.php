@@ -503,9 +503,8 @@
         }
         .mh360-footer-container {
             font-family: Arial, sans-serif;
-            padding: 40px 20px;
+            padding: 30px 10% 10px 10%;
             background-color: #ffffff;
-            max-width: 1200px;
             margin: 0 auto;
         }
         
