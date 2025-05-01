@@ -544,7 +544,8 @@
                         <div class="col-md-8">
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-map-pin"></i></span>
-                                <input id="ara" class="form-control" placeholder="Mahalle adını yazın...">
+                                <input id="ara" class="form-control" placeholder="Mahalle adını yazın..." list="mahalleler">
+                                <datalist id="mahalleler"></datalist>
                                 <button type="button" class="btn btn-primary" onclick="yorumGetir()">
                                     <i class="fas fa-search me-1"></i>Ara
                                 </button>
@@ -747,6 +748,25 @@ function showAlert(message, type = 'info') {
         setTimeout(() => alertDiv.remove(), 300);
     }, 5000);
 }
+
+// Otomatik tamamlama / autocomplete
+document.getElementById("ara").addEventListener("input", function() {
+    const q = this.value.trim();
+    if (q.length < 2) return; // 2 karakterin altındaysa sorgulama yapma
+
+    fetch(`getir.php?autocomplete=1&q=${encodeURIComponent(q)}`)
+        .then(res => res.json())
+        .then(list => {
+            const dataList = document.getElementById("mahalleler");
+            dataList.innerHTML = ""; // önceki önerileri temizle
+            list.forEach(item => {
+                const opt = document.createElement("option");
+                opt.value = item;       // eğer DB'den obje geliyorsa item.ad gibi ayarlayın
+                dataList.appendChild(opt);
+            });
+        })
+        .catch(err => console.error("Autocomplete hatası:", err));
+});
 
 // Load location data from JSON
 function yorumGetir(gun = 0) {
