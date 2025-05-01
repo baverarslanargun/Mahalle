@@ -3,9 +3,9 @@
 require_once __DIR__.'/../templates/header.php';
 ?>
 
-<!-- Leaflet CSS (CDN) -->
+<!-- Leaflet CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-<!-- Chart.js için CDN -->
+<!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
 
 <style>
@@ -29,12 +29,16 @@ require_once __DIR__.'/../templates/header.php';
         background-color: var(--light-bg);
     }
     
-    /* Map container */
     .map-container {
-        border-radius: 10px;
+        border-radius: 12px;
         overflow: hidden;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         margin-bottom: 2rem;
+        transition: box-shadow 0.3s ease;
+    }
+    
+    .map-container:hover {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
     }
     
     #map {
@@ -44,40 +48,62 @@ require_once __DIR__.'/../templates/header.php';
     
     /* Modal styles */
     #infoModal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.4);
-    }
+  display: none;
+  position: fixed;
+  z-index: 2000; /* Yüksek z-index değeri */
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(3px);
+}
     
-    .modal-content {
-        background-color: var(--white);
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        max-width: 600px;
-        border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    }
+.modal-content {
+  background-color: white;
+  margin: 10% auto;
+  padding: 20px;
+  border: none;
+  width: 80%;
+  max-width: 600px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  position: relative; /* Pozisyonlama ekle */
+  transform: translateY(0); /* Transform resetle */
+  animation: modalFadeIn 0.3s ease;
+  z-index: 2001; /* Modal içeriği için daha yüksek z-index */
+  opacity: 1; /* Opaklık değerini net bir şekilde belirle */
+  color: #333; /* İçerik rengi ekle */
+}
     
-    .close {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: color 0.2s ease;
-    }
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
     
-    .close:hover {
-        color: var(--danger);
-    }
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  z-index: 2002; /* En üstte olması için */
+}
+    
+.close:hover {
+  color: #ef4444;
+}
     
     .badge {
         padding: 0.35em 0.65em;
@@ -92,31 +118,50 @@ require_once __DIR__.'/../templates/header.php';
     .bg-warning { background-color: var(--warning); color: #000; }
     .bg-danger { background-color: var(--danger); }
     
+    #modal-body {
+  display: block; /* Görünürlüğü garanti et */
+  width: 100%;
+  overflow: auto;
+  padding: 10px;
+  margin-top: 15px;
+  position: relative;
+}
+
     .category-scores {
-        list-style: none;
-        padding-left: 0;
-    }
+  display: block;
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 20px;
+}
     
     .category-scores li {
-        margin-bottom: 10px;
-        padding: 8px;
-        border-radius: 8px;
-        background-color: rgba(59, 130, 246, 0.05);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: rgba(59, 130, 246, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+    
+    .category-scores li:hover {
+        background-color: rgba(59, 130, 246, 0.1);
+        transform: translateX(5px);
     }
     
     .category-name {
         font-weight: 500;
     }
     
-    .comment-container {
-        margin-top: 15px;
-        max-height: 350px;
-        overflow-y: auto;
-        padding-right: 10px;
-    }
+    /* Yorum kapsayıcı */
+.comment-container {
+  display: block;
+  margin-top: 15px;
+  max-height: 350px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
     
     .comment-container p {
         background-color: rgba(243, 244, 246, 0.7);
@@ -124,6 +169,19 @@ require_once __DIR__.'/../templates/header.php';
         border-radius: 8px;
         margin-bottom: 10px;
         border-left: 4px solid var(--primary-color);
+        transition: transform 0.2s ease;
+    }
+
+    .comment-item {
+        background-color: rgba(243, 244, 246, 0.7);
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        border-left: 4px solid #4338ca;
+        }
+    
+    .comment-container p:hover {
+        transform: translateX(5px);
     }
     
     /* Card styling */
@@ -132,6 +190,7 @@ require_once __DIR__.'/../templates/header.php';
         border-radius: 12px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         transition: all 0.3s ease;
+        overflow: hidden;
     }
     
     .card:hover {
@@ -144,6 +203,7 @@ require_once __DIR__.'/../templates/header.php';
         background-color: var(--primary-color);
         color: white;
         font-weight: 600;
+        padding: 1rem 1.25rem;
     }
     
     /* Form styling */
@@ -264,6 +324,22 @@ require_once __DIR__.'/../templates/header.php';
         color: var(--primary-color);
     }
     
+    /* Loading animation */
+    .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        border-top-color: #4338ca;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+        }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
     /* Responsive adjustments */
     @media (max-width: 768px) {
         #map {
@@ -277,6 +353,15 @@ require_once __DIR__.'/../templates/header.php';
         
         .btn {
             padding: 0.5rem 1rem;
+        }
+        
+        .search-section .btn-group {
+            flex-direction: column;
+        }
+        
+        .search-section .btn-group .btn {
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
         }
     }
     
@@ -292,6 +377,7 @@ require_once __DIR__.'/../templates/header.php';
     <!-- Map Container -->
     <div class="map-container">
         <div id="map"></div>
+        <div id="map-loading" class="loading-spinner" style="display:none;"></div>
     </div>
     
     <div class="alert alert-info">
@@ -385,44 +471,73 @@ require_once __DIR__.'/../templates/header.php';
 
 <!-- Bilgi Modal'i -->
 <div id="infoModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <div id="modal-body" class="p-2">
-            <h3 class="mb-3 text-primary">Mahalle Değerlendirmesi</h3>
-            
-            <!-- Stats Container -->
-            <div class="stats-container">
-                <div class="row mb-3">
-                    <div class="col">
-                        <h5>Genel Ortalama: <span id="genel-ortalama" class="badge"></span> 
-                        (<span id="toplam-yorum">0</span> değerlendirme)</h5>
-                    </div>
-                </div>
-                
-                <!-- Category Scores -->
-                <ul id="category-scores" class="category-scores mb-4">
-                    <!-- Categories will be populated here -->
-                </ul>
-            </div>
-            
-            <hr>
-            
-            <h5 class="mb-3"><i class="fas fa-comment-alt me-2"></i>Yorumlar:</h5>
-            
-            <!-- Comments Container -->
-            <div id="comments-container" class="comment-container">
-                <!-- Comments will be populated here -->
-            </div>
-            
-            <!-- More Button Container -->
-            <div id="more-btn-container" class="text-center mt-3">
-                <!-- "Load more" button will be added here if needed -->
-            </div>
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <div id="modal-body">
+      <h3 class="modal-title mb-3 text-primary">Mahalle Değerlendirmesi</h3>
+      
+      <!-- Stats Container -->
+      <div class="stats-container">
+        <div class="row mb-3">
+          <div class="col">
+            <h5 class="mb-0">Genel Ortalama: <span id="genel-ortalama" class="badge bg-info">0.00</span> 
+            (<span id="toplam-yorum">0</span> değerlendirme)</h5>
+          </div>
         </div>
+        
+        <!-- Category Scores -->
+        <div class="mt-4">
+          <h6 class="mb-3">Kategori Puanları:</h6>
+          <ul id="category-scores" class="category-scores mb-4">
+            <!-- Categories will be populated by JS -->
+            <div class="loading-spinner"></div>
+          </ul>
+        </div>
+      </div>
+      
+      <hr>
+      
+      <h5 class="mb-3"><i class="fas fa-comment-alt me-2"></i>Yorumlar:</h5>
+      
+      <!-- Comments Container -->
+      <div id="comments-container" class="comment-container">
+        <!-- Comments will be populated by JS -->
+        <div class="loading-spinner"></div>
+      </div>
+      
+      <!-- More Button Container -->
+      <div id="more-btn-container" class="text-center mt-3">
+        <!-- "Load more" button will be added here if needed -->
+      </div>
     </div>
+  </div>
 </div>
 
 <?php require_once __DIR__.'/../templates/footer.php'; ?>
+
+<!-- Modal için gerekli script -->
+<script>
+// Modal işlevleri
+document.addEventListener('DOMContentLoaded', function() {
+  // Close butonuna olay dinleyicisi ekle
+  const closeBtn = document.querySelector('.close');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function() {
+      document.getElementById('infoModal').style.display = 'none';
+      document.body.style.overflow = 'auto'; // Sayfa kaydırmayı tekrar etkinleştir
+    });
+  }
+
+  // Modal dışına tıklanınca kapat
+  window.addEventListener('click', function(event) {
+    const modal = document.getElementById('infoModal');
+    if (event.target === modal) {
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto'; // Sayfa kaydırmayı tekrar etkinleştir
+    }
+  });
+});
+</script>
 
 <!-- Leaflet JS (CDN) -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
