@@ -641,7 +641,6 @@
                     <li><a href="index.php" class="nav-link">Ana Sayfa</a></li>
                     <li><a href="map.php" class="nav-link">Harita</a></li>
                     <li><a href="review.php" class="nav-link">Değerlendirme</a></li>
-                    <li><a href="#" class="nav-link">Rapor</a></li>
                 </ul>
             </nav>
             
@@ -702,5 +701,271 @@
         });
     });
 });
+const styles = `
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow: auto;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    max-width: 400px;
+    width: 90%;
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 22px;
+    cursor: pointer;
+    color: #888;
+}
+
+.close-btn:hover {
+    color: #333;
+}
+
+.modal-header {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 22px;
+    color: #333;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #444;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+.form-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+}
+
+.remember-me input {
+    margin-right: 5px;
+}
+
+.forget-password {
+    font-size: 14px;
+    color: #4a90e2;
+    text-decoration: none;
+}
+
+.forget-password:hover {
+    text-decoration: underline;
+}
+
+.terms {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.terms input {
+    margin-right: 5px;
+}
+
+.terms a {
+    color: #4a90e2;
+    text-decoration: none;
+}
+
+.terms a:hover {
+    text-decoration: underline;
+}
+
+.submit-btn {
+    width: 100%;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.submit-btn:hover {
+    background-color: #3a7bc8;
+}
+`;
+
+// HTML for modals
+const loginModalHTML = `
+<div id="loginModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeLoginModal">&times;</span>
+        <div class="modal-header">
+            <h2>Giriş Yap</h2>
+        </div>
+        <div class="form-group">
+            <label for="login-email">Kullanıcı Adı / E-posta</label>
+            <input type="text" id="login-email" placeholder="ornek@mail.com">
+        </div>
+        <div class="form-group">
+            <label for="login-password">Şifre</label>
+            <input type="password" id="login-password" placeholder="••••••••">
+        </div>
+        <div class="form-footer">
+            <div class="remember-me">
+                <input type="checkbox" id="remember-me">
+                <label for="remember-me">Beni Hatırla</label>
+            </div>
+            <a href="#" class="forget-password">Şifreni mi unuttun?</a>
+        </div>
+        <button class="submit-btn">Giriş Yap</button>
+    </div>
+</div>
+`;
+
+const signupModalHTML = `
+<div id="signupModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" id="closeSignupModal">&times;</span>
+        <div class="modal-header">
+            <h2>Kayıt Ol</h2>
+        </div>
+        <div class="form-group">
+            <label for="signup-name">Ad Soyad</label>
+            <input type="text" id="signup-name" placeholder="Ahmet Yılmaz">
+        </div>
+        <div class="form-group">
+            <label for="signup-email">E-posta</label>
+            <input type="email" id="signup-email" placeholder="ornek@mail.com">
+        </div>
+        <div class="form-group">
+            <label for="signup-password">Şifre</label>
+            <input type="password" id="signup-password" placeholder="••••••••">
+        </div>
+        <div class="form-group">
+            <label for="signup-password-confirm">Şifre Tekrar</label>
+            <input type="password" id="signup-password-confirm" placeholder="••••••••">
+        </div>
+        <div class="terms">
+            <input type="checkbox" id="terms">
+            <label for="terms">
+                Kullanım koşullarını ve <a href="#">gizlilik politikasını</a> kabul ediyorum
+            </label>
+        </div>
+        <button class="submit-btn">Kayıt Ol</button>
+    </div>
+</div>
+`;
+
+// Function to add modals to the page
+function addModalsToPage() {
+  // Add style to page
+  const styleElement = document.createElement('style');
+  styleElement.textContent = styles;
+  document.head.appendChild(styleElement);
+  
+  // Add modal HTML to page
+  const modalsContainer = document.createElement('div');
+  modalsContainer.innerHTML = loginModalHTML + signupModalHTML;
+  document.body.appendChild(modalsContainer);
+  
+  // Add event listeners
+  const loginModal = document.getElementById('loginModal');
+  const signupModal = document.getElementById('signupModal');
+  
+  // Get buttons that open the modals
+  const loginButton = document.querySelector('.auth-link.login');
+  const signupButton = document.querySelector('.auth-link.signup');
+  
+  // Get close buttons
+  const closeLoginModal = document.getElementById('closeLoginModal');
+  const closeSignupModal = document.getElementById('closeSignupModal');
+  
+  // When the user clicks the button, open the modal
+  loginButton.addEventListener('click', function(e) {
+    e.preventDefault();
+    loginModal.style.display = 'block';
+  });
+  
+  signupButton.addEventListener('click', function(e) {
+    e.preventDefault();
+    signupModal.style.display = 'block';
+  });
+  
+  // When the user clicks on the close button, close the modal
+  closeLoginModal.addEventListener('click', function() {
+    loginModal.style.display = 'none';
+  });
+  
+  closeSignupModal.addEventListener('click', function() {
+    signupModal.style.display = 'none';
+  });
+  
+  // When the user clicks anywhere outside of the modal, close it
+  window.addEventListener('click', function(event) {
+    if (event.target === loginModal) {
+      loginModal.style.display = 'none';
+    }
+    if (event.target === signupModal) {
+      signupModal.style.display = 'none';
+    }
+  });
+  
+  // Prevent form submission (since we don't want to connect to a database)
+  const submitButtons = document.querySelectorAll('.submit-btn');
+  submitButtons.forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.preventDefault();
+      alert('Bu demo versiyonunda form gönderimi devre dışı bırakılmıştır.');
+    });
+  });
+}
+
+// Run when DOM is ready
+document.addEventListener('DOMContentLoaded', addModalsToPage);
     </script>
     
