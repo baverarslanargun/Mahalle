@@ -368,7 +368,6 @@ require_once __DIR__.'/../templates/header.php';
 </style>
 
 <div class="container my-4">
-    <!-- Page Header -->
     <div class="page-header text-center mb-4">
         <h2 class="page-title fw-bold">Mahalle Değerlendirme Haritası</h2>
         <p class="text-muted">Mahallelerin değerlendirmelerini görüntüleyin ve katkıda bulunun</p>
@@ -459,7 +458,6 @@ require_once __DIR__.'/../templates/header.php';
 
     <!-- Arama Sonuçları -->
     <div id="manualResult" class="mt-4" style="display:none;">
-        <!-- Seçilen mahalle detayları buraya gelecek -->
     </div>
     
     <!-- Grafik Bölümü -->
@@ -475,10 +473,9 @@ require_once __DIR__.'/../templates/header.php';
     <span class="close" onclick="closeModal()">&times;</span>
     <div id="modal-body">
       <h3 class="modal-title mb-3 text-primary">Mahalle Değerlendirmesi</h3>
-      
       <!-- Stats Container -->
       <div class="stats-container">
-        <div class="row mb-3">
+        <div class="row sb-3">
           <div class="col">
             <h5 class="mb-0">Genel Ortalama: <span id="genel-ortalama" class="badge bg-info">0.00</span> 
             (<span id="toplam-yorum">0</span> değerlendirme)</h5>
@@ -489,7 +486,6 @@ require_once __DIR__.'/../templates/header.php';
         <div class="mt-4">
           <h6 class="mb-3">Kategori Puanları:</h6>
           <ul id="category-scores" class="category-scores mb-4">
-            <!-- Categories will be populated by JS -->
             <div class="loading-spinner"></div>
           </ul>
         </div>
@@ -501,13 +497,11 @@ require_once __DIR__.'/../templates/header.php';
       
       <!-- Comments Container -->
       <div id="comments-container" class="comment-container">
-        <!-- Comments will be populated by JS -->
         <div class="loading-spinner"></div>
       </div>
       
       <!-- More Button Container -->
       <div id="more-btn-container" class="text-center mt-3">
-        <!-- "Load more" button will be added here if needed -->
       </div>
     </div>
   </div>
@@ -515,7 +509,6 @@ require_once __DIR__.'/../templates/header.php';
 
 <?php require_once __DIR__.'/../templates/footer.php'; ?>
 
-<!-- Modal için gerekli script -->
 <script>
 // Modal işlevleri
 document.addEventListener('DOMContentLoaded', function() {
@@ -524,7 +517,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (closeBtn) {
     closeBtn.addEventListener('click', function() {
       document.getElementById('infoModal').style.display = 'none';
-      document.body.style.overflow = 'auto'; // Sayfa kaydırmayı tekrar etkinleştir
+      document.body.style.overflow = 'auto'; 
     });
   }
 
@@ -533,17 +526,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('infoModal');
     if (event.target === modal) {
       modal.style.display = 'none';
-      document.body.style.overflow = 'auto'; // Sayfa kaydırmayı tekrar etkinleştir
+      document.body.style.overflow = 'auto';
     }
   });
 });
 </script>
 
-<!-- Leaflet JS (CDN) -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-<!-- Chart.js için CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
-
-<!-- Map initialization kodu -->
 <script src="/assets/js/map-init.js"></script>

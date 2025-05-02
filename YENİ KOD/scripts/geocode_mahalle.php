@@ -14,7 +14,7 @@ $stmt = $db->query("SELECT m.id, m.isim AS mah, ilce.isim AS ilce, il.isim AS il
                     JOIN il ON il.id = ilce.il_id
                     WHERE (m.latitude = 0 OR m.longitude = 0)
                     ORDER BY RAND()  
-                    LIMIT 30");
+                    LIMIT 100");
 
 $toUpdate = $stmt->fetchAll();
 

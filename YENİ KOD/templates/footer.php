@@ -86,3 +86,4 @@
             <p>© 2025 Mahalle360. Tüm hakları saklıdır.</p>
         </div>
     </footer>
+</body>

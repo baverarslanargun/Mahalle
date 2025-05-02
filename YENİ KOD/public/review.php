@@ -10,7 +10,7 @@ require_once __DIR__.'/../templates/header.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mahalle Değerlendirme Sistemi</title>
+    <title>Mahalle Değerlendirme</title>
 
     <!-- Chart.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -63,7 +63,7 @@ require_once __DIR__.'/../templates/header.php';
         position: relative;
     }
     
-    .page-header::after {
+    /*.page-header::after {
         content: '';
         position: absolute;
         bottom: 0;
@@ -74,7 +74,7 @@ require_once __DIR__.'/../templates/header.php';
         background: linear-gradient(to right, var(--primary-color), var(--accent-color));
         border-radius: 2px;
     }
-    
+    */
     .page-title {
         color: var(--primary-dark);
         font-weight: 700;
@@ -300,7 +300,7 @@ require_once __DIR__.'/../templates/header.php';
         transform: translateX(-50%);
     }
     
-    .form-title::after {
+    /*.form-title::after {
         content: '';
         position: absolute;
         bottom: -10px;
@@ -310,7 +310,7 @@ require_once __DIR__.'/../templates/header.php';
         background-color: var(--accent-color);
         border-radius: 3px;
     }
-    
+    */
     .form-label {
         font-weight: 500;
         color: var(--text-color);
@@ -738,14 +738,13 @@ require_once __DIR__.'/../templates/header.php';
 <!-- Rating Form -->
 <div class="main-container">
     <div class="page-header">
-        <h1 class="page-title">Mahalle Değerlendirme Sistemi</h1>
+        <h1 class="page-title">Mahalle Değerlendirme</h1>
         <p class="page-subtitle">Yaşadığınız mahalleyi değerlendirin, diğer insanların yorumlarını görün</p>
     </div>
     
     <!-- Rating Form -->
     <div class="form-container">
         <h3 class="form-title">Mahalle Değerlendirmesi Yap</h3>
-        
         <form id="reviewForm" action="../api/submit_review.php" method="post" class="row g-3">
             <!-- Location Selection -->
             <div class="col-md-4 mb-3">
@@ -847,7 +846,6 @@ require_once __DIR__.'/../templates/header.php';
     
     <!-- Results Container -->
     <div id="sonuc" class="results-container d-none">
-        <!-- Results will be loaded dynamically -->
     </div>
     
     <!-- Chart Container -->
@@ -885,13 +883,12 @@ require_once __DIR__.'/../templates/header.php';
                 </div>
             </div>
 
-            <!-- Add loading spinner that appears during form submission -->
             <div id="loadingSpinner" class="d-none">
                 <div class="spinner"></div>
                 <p class="text-center text-muted">İşleminiz gerçekleştiriliyor...</p>
             </div>
         </div>
-                <!-- Bootstrap JS -->
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 
 <script src="/assets/js/review.js"></script>

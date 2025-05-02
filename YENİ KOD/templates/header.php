@@ -5,10 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Mahallem</title>
 
-  <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-  <!-- Leaflet CSS -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -641,6 +639,7 @@
                     <li><a href="index.php" class="nav-link">Ana Sayfa</a></li>
                     <li><a href="map.php" class="nav-link">Harita</a></li>
                     <li><a href="review.php" class="nav-link">Değerlendirme</a></li>
+                    <li><a href="settings.php" class="nav-link">Kullanıcı Tercihleri</a></li>
                 </ul>
             </nav>
             
